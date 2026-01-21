@@ -17,7 +17,7 @@ export function AuthProvider({ children}) {
         try {
           const profile = await getProfileApi();
           setUser(profile);
-        } catch (err) {
+        } catch  {
           clearToken();
           setAuthToken(null);
           setUser(null);
