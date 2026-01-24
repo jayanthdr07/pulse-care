@@ -29,7 +29,7 @@ const RoleSelect = () => {
       </header>
 
       {/* Main content */}
-      <main className="flex-1 flex flex-col items-center justify-center p-6 bg-gradient-to-b from white to-blue-50">
+      <main className="flex-1 flex flex-col items-center justify-center p-6 bg-linear-to-b from white to-blue-50">
         <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl p-10 border border-gray-100">
           <div className="text-center mb-10">
             <h1 className="text-3xl font-bold text-slate-900 mb-2">
