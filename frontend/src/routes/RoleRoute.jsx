@@ -1,17 +1,25 @@
-import { useContext } from "react";
-import { AuthContext } from "../auth/authContext";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+
 
 function RoleRoute({ allowedRoles, children }) {
-  const { isAuthenticated, user, loading} = useContext(AuthContext);
+  const { user, loading} = useAuth();
 
-  if (loading) return <div className="p-6">Loading...</div>;
+  if (loading) {
+    return <div className="p-6">Loading...</div>;
 
-  if (!isAuthenticated) 
-    return <Navigate  to="/" replace/>;
-  
+  }
 
-  if (!allowedRoles.includes(user?.role)) 
-    return <Navigate to="/"  replace/>;
+  // not logged in -> go to role select
+  if (!user) {
+    return <Navigate to="/role-select" replace/>;
+  }
+ 
+  // logged in but wrong role -> unauthorized page
+
+ if (allowedRoles && !allowedRoles.includes(user.role)) {
+  return <Navigate to="/unauthorized" replace/>;
+ }
   
   return children;
 }
