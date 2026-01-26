@@ -2,6 +2,7 @@ import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 import RoleSelect from '../pages/RoleSelect'
 import PublicOnlyRoute from './PublicOnlyRoute'
+import {Navigate} from "react-router-dom";
 
 
 const AppRoutes = () => {
@@ -22,5 +23,6 @@ const AppRoutes = () => {
     </Routes>
   )
 }
+
 
 export default AppRoutes
