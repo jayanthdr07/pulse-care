@@ -10,17 +10,17 @@ const RoleSelect = () => {
 
   const goDoctor = () => {
     setSelectedRole("doctor");
-    navigate("/login/doctor");
+    navigate("/signup/doctor");
   };
 
   const goStaff = () => {
     setSelectedRole("staff");
-    navigate("/login/staff");
+    navigate("/signup/staff");
   };
 
   const goAdmin = () => {
     setSelectedRole("admin");
-    navigate("/login/admin");
+    navigate("/signup/admin");
   }
 
   return (
