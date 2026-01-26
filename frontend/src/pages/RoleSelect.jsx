@@ -1,10 +1,27 @@
-import React from "react";
+
 import logo from "../assets/icon.png";
 import { useNavigate } from "react-router-dom";
 import { User, Building2, Stethoscope } from "lucide-react";
+import { useAuth } from "../hooks/useAuth";
 
 const RoleSelect = () => {
   const navigate = useNavigate();
+  const { setSelectedRole} = useAuth();
+
+  const goDoctor = () => {
+    setSelectedRole("doctor");
+    navigate("/login/doctor");
+  };
+
+  const goStaff = () => {
+    setSelectedRole("staff");
+    navigate("/login/staff");
+  };
+
+  const goAdmin = () => {
+    setSelectedRole("admin");
+    navigate("/login/admin");
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col ">
@@ -41,30 +58,28 @@ const RoleSelect = () => {
           </div>
 
           <div className="flex flex-col gap-5">
-            {/* Patient Button */}
+            {/* Staff Button */}
             <button
-              onClick={() => navigate("/login/patient")}
+              onClick={goStaff}
               className="group flex items-center p-5 bg-white border border-gray-100 hover:border-blue-500 hover:bg-blue-50 transition-all duration-300 rounded-2xl shadow-sm"
             >
               <div className="bg-blue-100 p-3 rounded-xl group-hover:bg-blue-600 group-hover:text-white transition-all">
-                <User
+                <Building2
                   size={28}
                   className="text-blue-600 group-hover:text-white"
                 />
               </div>
               <div className="ml-5 text-left">
-                <p className="font-bold text-lg text-slate-800">
-                  Patient / User
-                </p>
+                <p className="font-bold text-lg text-slate-800">Staff</p>
                 <p className="text-sm text-slate-500">
-                  Access your medical records
+                  Front desk & operations
                 </p>
               </div>
             </button>
 
             {/* Admin button */}
             <button
-              onClick={() => navigate("/login/admin")}
+              onClick={goAdmin}
               className="group flex items-center p-5 bg-white border border-gray-100 hover:border-green-500 hover:bg-green-50 transition-all duration-300 rounded-2xl shadow-sm"
             >
               <div className="bg-green-100 p-3 rounded-xl group-hover:bg-green-600 group-hover:text-white transition-all">
@@ -74,22 +89,20 @@ const RoleSelect = () => {
                 />
               </div>
               <div className="ml-5 text-left">
-                <p className="font-bold text-lg text-slate-800">
-                  Hospital Admin
-                </p>
+                <p className="font-bold text-lg text-slate-800">Admin / User</p>
                 <p className="text-sm text-slate-500">
-                  Manage staff and facilities
+                  Access your medical records
                 </p>
               </div>
             </button>
 
             {/* Doctor Button */}
             <button
-              onClick={() => navigate("/login/doctor")}
+              onClick={goDoctor}
               className="group flex items-center p-5 bg-white border border-gray-100 hover:border-purple-500 hover:bg-purple-50 transition-all duration-300 rounded-2xl shadow-sm"
             >
               <div className="bg-purple-100 p-3 rounded-xl group-hover:bg-purple-600 group-hover:text-white transition-all">
-                <User
+                <Stethoscope
                   size={28}
                   className="text-purple-600 group-hover:text-white"
                 />
