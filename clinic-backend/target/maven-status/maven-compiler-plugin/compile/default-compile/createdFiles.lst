@@ -1,0 +1,5 @@
+com\clinic\enums\ReminderType.class
+com\clinic\ClinicApplication.class
+com\clinic\enums\ReminderStatus.class
+com\clinic\enums\Role.class
+com\clinic\enums\VisitStatus.class
