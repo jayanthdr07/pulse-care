@@ -6,56 +6,56 @@ Summary
 
 Frontend — overview
 - Two distinct auth styles coexist:
-	- Cookie-based flow (HttpOnly cookies) implemented via `fetch` calls in `frontend/src/auth/auth.api.js` (uses `credentials: 'include'`). The `AuthProvider` uses `fetchMeApi()` from this module to restore sessions.
-	- Token-based flow (bearer token) implemented via `axios` in `frontend/src/api/axiosInstance.js` and `frontend/src/api/authApi.js`. Tokens are stored in localStorage via `tokenUtils.js`.
+  - Cookie-based flow (HttpOnly cookies) implemented via `fetch` calls in `frontend/src/auth/auth.api.js` (uses `credentials: 'include'`). The `AuthProvider` uses `fetchMeApi()` from this module to restore sessions.
+  - Token-based flow (bearer token) implemented via `axios` in `frontend/src/api/axiosInstance.js` and `frontend/src/api/authApi.js`. Tokens are stored in localStorage via `tokenUtils.js`.
 - Both flows are supported but not fully unified. This makes behavior and security assumptions inconsistent across code paths.
 
 Per-file documentation & analysis
 
 - `frontend/src/auth/authContext.jsx`
-	- Purpose: `AuthProvider` centralizes `user`, `selectedRole`, `loading`, and exposes signup/login/logout helpers.
-	- Behavior: On mount it calls `fetchMeApi()` to restore session; sets `user` when successful and navigates to role dashboard via `getDashboardPath`.
-	- Notes: Designed primarily for cookie-based session restore; `persistUser` assumes API returns a `user` object. If tokens are required, `persistUser` should also call `setToken()`.
-	- Risk: If backend returns token instead of relying on cookies, current code doesn't persist token automatically.
+  - Purpose: `AuthProvider` centralizes `user`, `selectedRole`, `loading`, and exposes signup/login/logout helpers.
+  - Behavior: On mount it calls `fetchMeApi()` to restore session; sets `user` when successful and navigates to role dashboard via `getDashboardPath`.
+  - Notes: Designed primarily for cookie-based session restore; `persistUser` assumes API returns a `user` object. If tokens are required, `persistUser` should also call `setToken()`.
+  - Risk: If backend returns token instead of relying on cookies, current code doesn't persist token automatically.
 
 - `frontend/src/auth/auth.api.js`
-	- Purpose: cookie-friendly `fetch` helpers for signup, login, fetch-me and logout.
-	- Behavior: Uses `credentials: 'include'` so the browser sends/receives HttpOnly cookies. Good for security when backend sets cookie with `HttpOnly` and `Secure` flags.
-	- Notes: Endpoints include `/auth/doctor/login`, `/auth/staff/login`, `/auth/admin/login` and `/auth/me`.
+  - Purpose: cookie-friendly `fetch` helpers for signup, login, fetch-me and logout.
+  - Behavior: Uses `credentials: 'include'` so the browser sends/receives HttpOnly cookies. Good for security when backend sets cookie with `HttpOnly` and `Secure` flags.
+  - Notes: Endpoints include `/auth/doctor/login`, `/auth/staff/login`, `/auth/admin/login` and `/auth/me`.
 
 - `frontend/src/api/authApi.js`
-	- Purpose: `axios` wrapper returning `response.data` for token-based login/profile calls.
-	- Behavior: Works with `axiosInstance` which attaches `Authorization` header from `tokenUtils.getToken()`.
-	- Notes: This module expects token usage; does not set cookies.
+  - Purpose: `axios` wrapper returning `response.data` for token-based login/profile calls.
+  - Behavior: Works with `axiosInstance` which attaches `Authorization` header from `tokenUtils.getToken()`.
+  - Notes: This module expects token usage; does not set cookies.
 
 - `frontend/src/api/axiosInstance.js`
-	- Purpose: Central axios instance using `VITE_API_BASE_URL` and interceptors.
-	- Behavior: Adds `Authorization: Bearer <token>` if `tokenUtils.getToken()` returns a token. On 401 it clears token and redirects to `/login`.
-	- Risk: Storing tokens in localStorage is vulnerable to XSS. If you need long-lived sessions, prefer cookie HttpOnly or use short-lived tokens + refresh tokens with secure storage pattern.
+  - Purpose: Central axios instance using `VITE_API_BASE_URL` and interceptors.
+  - Behavior: Adds `Authorization: Bearer <token>` if `tokenUtils.getToken()` returns a token. On 401 it clears token and redirects to `/login`.
+  - Risk: Storing tokens in localStorage is vulnerable to XSS. If you need long-lived sessions, prefer cookie HttpOnly or use short-lived tokens + refresh tokens with secure storage pattern.
 
 - `frontend/src/auth/auth.routes.js`
-	- Purpose: `getDashboardPath(role)` maps `doctor`/`staff`/`admin` roles to dashboards.
-	- Notes: Simple and clear.
+  - Purpose: `getDashboardPath(role)` maps `doctor`/`staff`/`admin` roles to dashboards.
+  - Notes: Simple and clear.
 
 - `frontend/src/auth/auth.storage.js`
-	- Purpose: Saves `pulsecare_selected_role` in localStorage.
-	- Notes: Fine for non-sensitive UI preferences.
+  - Purpose: Saves `pulsecare_selected_role` in localStorage.
+  - Notes: Fine for non-sensitive UI preferences.
 
 - `frontend/src/hooks/useAuth.js`
-	- Purpose: Hook to access `AuthContext` and fail fast if used outside provider.
+  - Purpose: Hook to access `AuthContext` and fail fast if used outside provider.
 
 - `frontend/src/routes/*` (AppRoutes, PublicOnlyRoute, ProtectedRoutes, RoleRoute)
-	- Purpose: Route declarations and guards that use `useAuth()` to decide navigation.
-	- Behavior: `PublicOnlyRoute` redirects authed users to dashboard. `ProtectedRoutes` and `RoleRoute` guard access and redirect to `/role-select` or `/unauthorized`.
-	- Notes: Guards correctly check `loading` to avoid rendering during restore.
+  - Purpose: Route declarations and guards that use `useAuth()` to decide navigation.
+  - Behavior: `PublicOnlyRoute` redirects authed users to dashboard. `ProtectedRoutes` and `RoleRoute` guard access and redirect to `/role-select` or `/unauthorized`.
+  - Notes: Guards correctly check `loading` to avoid rendering during restore.
 
 - `frontend/src/utils/tokenUtils.js`
-	- Purpose: Simple localStorage helpers: `setToken`, `getToken`, `clearToken`.
-	- Risk: localStorage storage means JS can read tokens; avoid if backend supports HttpOnly cookie sessions.
+  - Purpose: Simple localStorage helpers: `setToken`, `getToken`, `clearToken`.
+  - Risk: localStorage storage means JS can read tokens; avoid if backend supports HttpOnly cookie sessions.
 
 Backend entrypoint
 - `clinic-backend/src/main/java/com/clinic/ClinicApplication.java`
-	- A standard Spring Boot application main class with `@SpringBootApplication`. Nothing to change here; it's the typical entrypoint.
+  - A standard Spring Boot application main class with `@SpringBootApplication`. Nothing to change here; it's the typical entrypoint.
 
 Key findings and recommendations
 
