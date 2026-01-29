@@ -1,11 +1,11 @@
 import { useState } from "react";
 import logo from "../../assets/icon.png";
 import bg from "../../assets/bg1.jpg";
-import { doctorSignupApi } from "../../auth/auth.api";
+import { staffSignupApi } from "../../auth/auth.api";
 import { useNavigate } from "react-router-dom";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 
-const DoctorSignUp = () => {
+const StaffSignUp = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -14,18 +14,12 @@ const DoctorSignUp = () => {
     password: "",
     confirmPassword: "",
     phone: "",
-
-    doctorId: "",
-    licenseNumber: "",
-    specialization: "",
+    staffId: "",
     department: "",
-    qualification: "",
-    yearsOfExperience: "",
-
+    role: "",
     gender: "",
     dateOfBirth: "",
     shift: "",
-
     terms: false,
   });
 
@@ -69,24 +63,13 @@ const DoctorSignUp = () => {
     if (formData.password !== formData.confirmPassword)
       newErrors.confirmPassword = "Passwords do not match.";
 
-    if (!formData.doctorId)
-      newErrors.doctorId = "Doctor ID is required (hospital ID).";
+    if (!formData.staffId)
+      newErrors.staffId = "Staff ID is required for hospital staff.";
 
-    if (!formData.licenseNumber)
-      newErrors.licenseNumber = "Medical license/registration number is required.";
+    if (!formData.department)
+      newErrors.department = "Department is required.";
 
-    if (!formData.specialization)
-      newErrors.specialization = "Specialization is required.";
-
-    if (!formData.department) newErrors.department = "Department is required.";
-
-    if (!formData.qualification)
-      newErrors.qualification = "Qualification is required.";
-
-    if (!formData.yearsOfExperience)
-      newErrors.yearsOfExperience = "Years of experience is required.";
-    else if (!/^\d+$/.test(String(formData.yearsOfExperience)))
-      newErrors.yearsOfExperience = "Years of experience must be a number.";
+    if (!formData.role) newErrors.role = "Role is required.";
 
     if (!formData.terms)
       newErrors.terms = "You must accept the terms and conditions.";
@@ -102,17 +85,18 @@ const DoctorSignUp = () => {
     if (Object.keys(validationErrors).length === 0) {
       try {
         setIsSubmitting(true);
-        const response = await doctorSignupApi(formData);
-        console.log("Doctor signup successful:", response);
+        const response = await staffSignupApi(formData);
+        console.log("Staff signup successful:", response);
 
+        // If backend returns a token or similar, you can store it here.
         if (response?.token) {
           localStorage.setItem("token", response.token);
         }
 
-        navigate("/doctor/dashboard");
+        navigate("/staff/dashboard");
       } catch (err) {
         console.error(
-          "Doctor signup error:",
+          "Staff signup error:",
           err?.response?.data?.message || err.message
         );
       } finally {
@@ -140,16 +124,16 @@ const DoctorSignUp = () => {
         </div>
 
         <h2 className="font-bold text-xl flex justify-center mb-4">
-          Doctor Registration - Pulse-care
+          Staff Registration - Pulse-care
         </h2>
         <p className="text-center text-sm text-gray-600 mb-6">
-          Please fill in your professional details as per hospital and medical
-          council records.
+          Please provide complete staff details as maintained by the hospital HR
+          (name, ID, role, department, and contact information).
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Full Name */}
+            {/* Full name */}
             <div>
               <label className="block text-sm font-medium mb-1">Full Name</label>
               <input
@@ -157,7 +141,7 @@ const DoctorSignUp = () => {
                 onChange={handleChange}
                 type="text"
                 name="fullName"
-                placeholder="e.g. Dr. Jane Smith"
+                placeholder="e.g. Dr. John Doe"
                 className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               {errors.fullName && (
@@ -165,23 +149,23 @@ const DoctorSignUp = () => {
               )}
             </div>
 
-            {/* Doctor ID */}
+            {/* Staff ID */}
             <div>
-              <label className="block text-sm font-medium mb-1">Doctor ID</label>
+              <label className="block text-sm font-medium mb-1">Staff ID</label>
               <input
-                value={formData.doctorId}
+                value={formData.staffId}
                 onChange={handleChange}
                 type="text"
-                name="doctorId"
-                placeholder="Hospital-issued doctor ID"
+                name="staffId"
+                placeholder="Hospital-issued staff ID"
                 className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              {errors.doctorId && (
-                <p className="text-red-500 text-sm">{errors.doctorId}</p>
+              {errors.staffId && (
+                <p className="text-red-500 text-sm">{errors.staffId}</p>
               )}
             </div>
 
-            {/* Work Email */}
+            {/* Email */}
             <div>
               <label className="block text-sm font-medium mb-1">Work Email</label>
               <input
@@ -197,7 +181,7 @@ const DoctorSignUp = () => {
               )}
             </div>
 
-            {/* Phone */}
+            {/* Phone Number */}
             <div>
               <label className="block text-sm font-medium mb-1">
                 Phone Number
@@ -207,57 +191,9 @@ const DoctorSignUp = () => {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                placeholder="Contact number"
+                placeholder="Emergency/Contact number"
                 className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-            </div>
-
-            {/* License Number */}
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                License / Registration No.
-              </label>
-              <input
-                type="text"
-                name="licenseNumber"
-                value={formData.licenseNumber}
-                onChange={handleChange}
-                placeholder="Medical council registration number"
-                className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              {errors.licenseNumber && (
-                <p className="text-red-500 text-sm">{errors.licenseNumber}</p>
-              )}
-            </div>
-
-            {/* Specialization */}
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Specialization
-              </label>
-              <select
-                name="specialization"
-                value={formData.specialization}
-                onChange={handleChange}
-                className="w-full border rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">Select Specialization</option>
-                <option value="General Medicine">General Medicine</option>
-                <option value="Cardiology">Cardiology</option>
-                <option value="Neurology">Neurology</option>
-                <option value="Orthopedics">Orthopedics</option>
-                <option value="Dermatology">Dermatology</option>
-                <option value="Pediatrics">Pediatrics</option>
-                <option value="Gynecology">Gynecology</option>
-                <option value="Psychiatry">Psychiatry</option>
-                <option value="Radiology">Radiology</option>
-                <option value="Anesthesiology">Anesthesiology</option>
-                <option value="Surgery">Surgery</option>
-                <option value="Other">Other</option>
-              </select>
-              {errors.specialization && (
-                <p className="text-red-500 text-sm">{errors.specialization}</p>
-              )}
             </div>
 
             {/* Department */}
@@ -270,14 +206,16 @@ const DoctorSignUp = () => {
                 className="w-full border rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Select Department</option>
-                <option value="OPD">OPD</option>
                 <option value="Emergency">Emergency</option>
+                <option value="OPD">OPD</option>
                 <option value="ICU">ICU</option>
                 <option value="Surgery">Surgery</option>
                 <option value="Pediatrics">Pediatrics</option>
                 <option value="Gynecology">Gynecology</option>
                 <option value="Radiology">Radiology</option>
                 <option value="Laboratory">Laboratory</option>
+                <option value="Pharmacy">Pharmacy</option>
+                <option value="Administration">Administration</option>
                 <option value="Others">Others</option>
               </select>
               {errors.department && (
@@ -285,39 +223,27 @@ const DoctorSignUp = () => {
               )}
             </div>
 
-            {/* Qualification */}
+            {/* Role */}
             <div>
-              <label className="block text-sm font-medium mb-1">
-                Qualification
-              </label>
-              <input
-                type="text"
-                name="qualification"
-                value={formData.qualification}
+              <label className="block text-sm font-medium mb-1">Role</label>
+              <select
+                name="role"
+                value={formData.role}
                 onChange={handleChange}
-                placeholder="e.g. MBBS, MD"
-                className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              {errors.qualification && (
-                <p className="text-red-500 text-sm">{errors.qualification}</p>
-              )}
-            </div>
-
-            {/* Years of Experience */}
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Years of Experience
-              </label>
-              <input
-                type="text"
-                name="yearsOfExperience"
-                value={formData.yearsOfExperience}
-                onChange={handleChange}
-                placeholder="e.g. 5"
-                className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              {errors.yearsOfExperience && (
-                <p className="text-red-500 text-sm">{errors.yearsOfExperience}</p>
+                className="w-full border rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Select Role</option>
+                <option value="Doctor">Doctor</option>
+                <option value="Nurse">Nurse</option>
+                <option value="Lab Technician">Lab Technician</option>
+                <option value="Pharmacist">Pharmacist</option>
+                <option value="Receptionist">Receptionist</option>
+                <option value="Billing Staff">Billing Staff</option>
+                <option value="Support Staff">Support Staff</option>
+                <option value="Other">Other</option>
+              </select>
+              {errors.role && (
+                <p className="text-red-500 text-sm">{errors.role}</p>
               )}
             </div>
 
@@ -399,7 +325,7 @@ const DoctorSignUp = () => {
             )}
           </div>
 
-          {/* Confirm Password */}
+          {/* Confirm password */}
           <div className="relative">
             <label className="block text-sm font-medium mb-1">
               Confirm Password
@@ -427,7 +353,7 @@ const DoctorSignUp = () => {
             )}
           </div>
 
-          {/* Terms */}
+          {/* Terms & Conditions */}
           <div className="flex items-center">
             <input
               type="checkbox"
@@ -437,32 +363,30 @@ const DoctorSignUp = () => {
               className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
             />
             <label className="ml-2 text-sm">
-              I confirm the above details are correct and agree to the Terms &
-              Conditions.
+              I confirm that the above details match the records maintained by
+              the hospital and agree to the Terms & Conditions.
             </label>
           </div>
           {errors.terms && (
             <p className="text-red-500 text-sm">{errors.terms}</p>
           )}
 
-          {/* Submit */}
+          {/* Submit Button */}
           <button
             type="submit"
             className={`w-full py-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-700 transition ${
-              (!formData.terms || isSubmitting)
-                ? "opacity-50 cursor-not-allowed"
-                : ""
+              (!formData.terms || isSubmitting) ? "opacity-50 cursor-not-allowed" : ""
             }`}
             disabled={!formData.terms || isSubmitting}
           >
-            {isSubmitting ? "Creating Doctor Account..." : "Create Doctor Account"}
+            {isSubmitting ? "Creating Staff Account..." : "Create Staff Account"}
           </button>
         </form>
 
         <p className="text-center text-sm text-gray-500 mt-4 font-semibold">
-          Already registered as a doctor?{" "}
+          Already registered as staff?{" "}
           <a
-            href="/login/doctor"
+            href="/login/staff"
             className="text-blue-600 hover:underline font-semibold"
           >
             Log In
@@ -473,4 +397,4 @@ const DoctorSignUp = () => {
   );
 };
 
-export default DoctorSignUp;
+export default StaffSignUp;

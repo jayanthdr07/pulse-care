@@ -34,15 +34,21 @@ export const adminLoginApi = (data) => jsonPost(`${BASE_URL}/auth/admin/login`, 
 // user API
 
 export const fetchMeApi = async () => {
-  const res = await fetch(`${BASE_URL}/auth/me`, {
-    method: "GET",
-    credentials: "include",
-  });
+  // If backend is down/unreachable, don't crash the app on boot.
+  try {
+    const res = await fetch(`${BASE_URL}/auth/me`, {
+      method: "GET",
+      credentials: "include",
+    });
 
-  if (res.status === 401) return null;
-  if (!res.ok) throw new Error("Failed to restore session");
+    if (res.status === 401) return null;
+    if (!res.ok) throw new Error("Failed to restore session");
 
-  return res.json();
+    return res.json();
+  } catch {
+    // Network errors (e.g. ERR_CONNECTION_REFUSED) should behave like "not logged in".
+    return null;
+  }
 };
 
 // Logout API test
