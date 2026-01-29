@@ -6,6 +6,8 @@ import {Navigate} from "react-router-dom";
 import AdminSignUp from '../pages/login/AdminSignUp';
 import AdminLogin from '../pages/login/AdminLogin';
 import AdminDashboard from '../pages/dashboard/AdminDashboard';
+import StaffSignUp from '../pages/login/StaffSignUp';
+import StaffLogin from '../pages/login/StaffLogin';
 
 
 const AppRoutes = () => {
@@ -27,6 +29,8 @@ const AppRoutes = () => {
       {/* Fallback Route */}
       <Route path="/signup/admin" element={<AdminSignUp />} />
       <Route path='/login/admin' element={<AdminLogin />}/>
+      <Route path='/signup/staff' element={<StaffSignUp />}/>
+      <Route path='/login/staff' element={<StaffLogin />}/>
 
 
 
