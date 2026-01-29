@@ -8,6 +8,7 @@ import AdminLogin from '../pages/login/AdminLogin';
 import AdminDashboard from '../pages/dashboard/AdminDashboard';
 import StaffSignUp from '../pages/login/StaffSignUp';
 import StaffLogin from '../pages/login/StaffLogin';
+import DoctorSignUp from '../pages/login/DoctorSignUp';
 
 
 const AppRoutes = () => {
@@ -31,6 +32,7 @@ const AppRoutes = () => {
       <Route path='/login/admin' element={<AdminLogin />}/>
       <Route path='/signup/staff' element={<StaffSignUp />}/>
       <Route path='/login/staff' element={<StaffLogin />}/>
+      <Route path='/signup/doctor' element={<DoctorSignUp />}/>
 
 
 
