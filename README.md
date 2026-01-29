@@ -95,4 +95,65 @@ npm install
 npm run dev
 ```
 
+Auth pages — signup (Doctor + Staff)
+
+Routes
+- `GET /signup/staff` → `frontend/src/pages/login/StaffSignUp.jsx`
+- `GET /signup/doctor` → `frontend/src/pages/login/DoctorSignUp.jsx`
+
+API + environment
+- Frontend uses `frontend/src/auth/auth.api.js`
+  - `staffSignupApi(data)` → `POST ${VITE_API_BASE_URL}/auth/staff/signup`
+  - `doctorSignupApi(data)` → `POST ${VITE_API_BASE_URL}/auth/doctor/signup`
+- Env required (frontend):
+  - `VITE_API_BASE_URL` (example: `http://localhost:9000/api`)
+- Notes:
+  - These signup forms submit JSON via `fetch` with `credentials: "include"` (cookie-friendly).
+  - Session restore uses `GET ${VITE_API_BASE_URL}/auth/me`. If the backend is offline, the frontend now treats it as “not logged in” (no crash).
+
+Staff signup — fields sent to API
+- **Identity & contact**
+  - `fullName` (required)
+  - `staffId` (required, hospital-issued)
+  - `email` (required, work email)
+  - `phone` (optional)
+- **Hospital details**
+  - `department` (required)
+  - `role` (required)
+  - `shift` (optional)
+- **Personal (optional)**
+  - `gender` (optional)
+  - `dateOfBirth` (optional)
+- **Security & consent**
+  - `password` (required)
+  - `confirmPassword` (must match `password`)
+  - `terms` (required, must be true to submit)
+
+Doctor signup — fields sent to API
+- **Identity & contact**
+  - `fullName` (required)
+  - `doctorId` (required, hospital-issued)
+  - `email` (required, work email)
+  - `phone` (optional)
+- **Professional**
+  - `licenseNumber` (required)
+  - `specialization` (required)
+  - `department` (required)
+  - `qualification` (required)
+  - `yearsOfExperience` (required, numeric string)
+  - `shift` (optional)
+- **Personal (optional)**
+  - `gender` (optional)
+  - `dateOfBirth` (optional)
+- **Security & consent**
+  - `password` (required)
+  - `confirmPassword` (must match `password`)
+  - `terms` (required, must be true to submit)
+
+Validation rules (both pages)
+- Email must match a basic pattern `\S+@\S+\.\S+`
+- Confirm password must match password
+- Terms must be accepted to enable submission
+- `DoctorSignUp` additionally enforces `yearsOfExperience` to be numeric
+
 If you want, I can now: implement one of the quick actions above, add unit tests for the auth flow, or create a migration plan to unify the auth approach. Which would you like next?
